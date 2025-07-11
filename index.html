@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>广州市公园绿地面积增长情况(2018-2022)</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        #chart-container {
+            width: 900px;
+            height: 600px;
+            margin: 30px auto;
+        }
+        h1 {
+            text-align: center;
+            font-family: "Microsoft YaHei", sans-serif;
+            color: #333;
+            margin-top: 20px;
+        }
+        .subtitle {
+            text-align: center;
+            font-family: "Microsoft YaHei", sans-serif;
+            color: #666;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+<h1>广州市公园绿地面积增长情况</h1>
+<div class="subtitle">2018-2022年（单位：公顷）</div>
+<div id="chart-container"></div>
+
+<script>
+    // 初始化ECharts实例
+    var myChart = echarts.init(document.getElementById('chart-container'));
+
+    // 准备数据
+    var years = ['2018', '2019', '2020', '2021', '2022'];
+    var data = [30188.5, 32081.33, 32358.43, 32360, 32413];
+
+    // 计算增长率
+    var growthRates = [];
+    for (let i = 1; i < data.length; i++) {
+        growthRates.push(((data[i] - data[i-1]) / data[i-1] * 100).toFixed(2) + '%');
+    }
+    growthRates.unshift('-'); // 2018年无增长率
+
+    // 配置项
+    var option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            },
+            formatter: function(params) {
+                var result = params[0].name + '<br/>';
+                result += '绿地面积: ' + params[0].value + ' 公顷<br/>';
+                result += '增长率: ' + growthRates[params[0].dataIndex];
+                return result;
+            }
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {
+                    show: true,
+                    title: '保存图片'
+                },
+                dataView: {
+                    show: true,
+                    title: '数据视图',
+                    readOnly: true
+                },
+                magicType: {
+                    show: true,
+                    title: {
+                        line: '折线图',
+                        bar: '柱状图'
+                    },
+                    type: ['line', 'bar']
+                },
+                restore: {
+                    show: true,
+                    title: '还原'
+                }
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            data: years,
+            axisLabel: {
+                fontSize: 12
+            },
+            axisLine: {
+                lineStyle: {
+                    color: '#333'
+                }
+            },
+            name: '年份',
+            nameLocation: 'middle',
+            nameGap: 25
+        },
+        yAxis: {
+            type: 'value',
+            axisLabel: {
+                formatter: '{value} 公顷'
+            },
+            axisLine: {
+                show: true,
+                lineStyle: {
+                    color: '#333'
+                }
+            },
+            name: '绿地面积',
+            nameLocation: 'middle',
+            nameGap: 40,
+            splitLine: {
+                lineStyle: {
+                    type: 'dashed'
+                }
+            }
+        },
+        series: [{
+            name: '绿地面积',
+            type: 'bar',
+            data: data,
+            itemStyle: {
+                color: function(params) {
+                    // 颜色渐变，数值越大颜色越深
+                    var colorList = [
+                        '#8ECFC9', '#FFBE7A', '#FA7F6F', '#82B0D2', '#BEB8DC'
+                    ];
+                    return colorList[params.dataIndex];
+                },
+                borderRadius: [5, 5, 0, 0]
+            },
+            label: {
+                show: true,
+                position: 'top',
+                formatter: function(params) {
+                    return params.value + '\n' + growthRates[params.dataIndex];
+                },
+                fontSize: 12,
+                lineHeight: 18
+            },
+            emphasis: {
+                itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }]
+    };
+
+    // 使用配置项显示图表
+    myChart.setOption(option);
+
+    // 响应式调整
+    window.addEventListener('resize', function() {
+        myChart.resize();
+    });
+</script>
+</body>
+</html>
